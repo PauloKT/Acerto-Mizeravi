@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 from contextlib import contextmanager
-from config import DB_CONFIG
+from .config import DB_CONFIG
 
 @contextmanager
 def get_db_connection():

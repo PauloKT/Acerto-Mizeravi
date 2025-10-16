@@ -10,6 +10,10 @@ app.register_blueprint(login_api)
 def index():
     return send_from_directory(app.static_folder, 'index.html')
 
+@app.route('/register')
+def register_page():
+    return send_from_directory(app.static_folder, 'register.html')
+
 @app.route('/<path:filename>')
 def static_files(filename):
     return send_from_directory(app.static_folder, filename)

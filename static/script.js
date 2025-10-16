@@ -1,4 +1,4 @@
-// Função para fazer requisições à API
+
 async function fazerRequisicao(url, dados) {
   try {
     const response = await fetch(url, {
@@ -15,7 +15,7 @@ async function fazerRequisicao(url, dados) {
   }
 }
 
-// Registro - só executa se estiver na página de registro
+
 const registroForm = document.getElementById('registroForm');
 if (registroForm) {
   registroForm.onsubmit = async function(e) {
@@ -42,7 +42,7 @@ if (registroForm) {
   };
 }
 
-// Login - só executa se estiver na página de login
+
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
   loginForm.onsubmit = async function(e) {

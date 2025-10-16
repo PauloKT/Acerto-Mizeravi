@@ -3,9 +3,11 @@ from app.models.user import User
 from config.database import get_db_connection
 
 class UserService:
+    """Serviço para operações com usuários"""
     
     @staticmethod
     def create_user(nome: str, email: str) -> User:
+        """Cria um novo usuário"""
         try:
             with get_db_connection() as conn:
                 cursor = conn.cursor(dictionary=True)
@@ -37,6 +39,7 @@ class UserService:
     
     @staticmethod
     def get_user_by_name(nome: str) -> Optional[User]:
+        """Busca usuário por nome"""
         try:
             with get_db_connection() as conn:
                 cursor = conn.cursor(dictionary=True)
