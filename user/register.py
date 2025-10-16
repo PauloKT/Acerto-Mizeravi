@@ -1,30 +1,14 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+from config.database import get_db
 
-api = Blueprint('api', __name__)
-
-usuarios_db = []
-proximo_id = 1
-
-class Usuario:
-    def __init__(self, nome, email):
-        global proximo_id
-        self.id = proximo_id
-        proximo_id += 1
-        self.nome = nome
-        self.email = email
-        self.data_registro = datetime.utcnow()
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'nome': self.nome,
-            'email': self.email,
-            'data_registro': self.data_registro.isoformat()
-        }
+user_api = Blueprint('user_api', __name__)
 
 def validar_dados(data):
     erros = []
+    if not data:
+        erros.append('Requisição JSON inválida')
+        return erros
     nome = data.get('nome', '').strip()
     email = data.get('email', '').strip()
     if not nome:
@@ -35,86 +19,136 @@ def validar_dados(data):
         erros.append('Email inválido')
     return erros
 
-def buscar_usuario_por_nome(nome):
-    for usuario in usuarios_db:
-        if usuario.nome == nome:
-            return usuario
-    return None
-
-@api.route('/api/registrar', methods=['POST'])
+@user_api.route('/api/registrar', methods=['POST'])
 def registrar_usuario():
     data = request.get_json()
     erros = validar_dados(data)
     if erros:
         return jsonify({'sucesso': False, 'erros': erros}), 400
 
+    nome = data['nome'].strip()
+    email = data['email'].strip()
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    
-    cursor.execute("SELECT * FROM usuarios WHERE email = %s", (data['email'].strip(),))
-    usuario_existente = cursor.fetchone()
-    if usuario_existente:
+    try:
+        cursor.execute("SELECT id FROM usuarios WHERE email = %s", (email,))
+        if cursor.fetchone():
+            return jsonify({'sucesso': False, 'erro': 'Este email já está registrado.'}), 409
+
+        cursor.execute(
+            "INSERT INTO usuarios (nome, email, data_registro) VALUES (%s, %s, %s)",
+            (nome, email, datetime.utcnow())
+        )
+        db.commit()
+        user_id = cursor.lastrowid
+
+        cursor.execute("SELECT id, nome, email, data_registro FROM usuarios WHERE id = %s", (user_id,))
+        usuario = cursor.fetchone()
+    except Exception as e:
+        db.rollback()
+        return jsonify({'sucesso': False, 'erro': 'Erro ao registrar usuário.', 'detalhes': str(e)}), 500
+    finally:
         cursor.close()
         db.close()
-        return jsonify({'sucesso': False, 'erro': 'Este email já está registrado.'}), 409
 
-    cursor.execute(
-        "INSERT INTO usuarios (nome, email, data_registro) VALUES (%s, %s, %s)",
-        (data['nome'].strip(), data['email'].strip(), datetime.utcnow())
-    )
-    db.commit()
-    cursor.close()
-    db.close()
-    return jsonify({'sucesso': True, 'mensagem': 'Usuário registrado com sucesso!'}), 201
+    # normaliza data_registro para isoformat se necessário
+    if usuario and 'data_registro' in usuario and hasattr(usuario['data_registro'], 'isoformat'):
+        usuario['data_registro'] = usuario['data_registro'].isoformat()
 
-@api.route('/api/login', methods=['POST'])
-def login_usuario():
-    data = request.get_json()
-    nome = data.get('nome', '').strip()
-    if not nome:
-        return jsonify({'sucesso': False, 'erro': 'Nome é obrigatório'}), 400
-    usuario = buscar_usuario_por_nome(nome)
-    if usuario:
-        return jsonify({'sucesso': True, 'mensagem': 'Login realizado!', 'usuario': usuario.to_dict()})
-    else:
-        return jsonify({'sucesso': False, 'erro': 'Usuário não encontrado'}), 404
+    return jsonify({'sucesso': True, 'mensagem': 'Usuário registrado com sucesso!', 'usuario': usuario}), 201
 
-@api.route('/api/usuarios', methods=['GET'])
+@user_api.route('/api/usuarios', methods=['GET'])
 def listar_usuarios():
-    return jsonify({
-        'sucesso': True,
-        'usuarios': [usuario.to_dict() for usuario in usuarios_db],
-        'total': len(usuarios_db)
-    })
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id, nome, email, data_registro FROM usuarios")
+        usuarios = cursor.fetchall()
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': 'Erro ao listar usuários.', 'detalhes': str(e)}), 500
+    finally:
+        cursor.close()
+        db.close()
 
-@api.route('/api/usuarios/<int:usuario_id>', methods=['GET'])
+    for u in usuarios:
+        if 'data_registro' in u and hasattr(u['data_registro'], 'isoformat'):
+            u['data_registro'] = u['data_registro'].isoformat()
+
+    return jsonify({'sucesso': True, 'usuarios': usuarios, 'total': len(usuarios)})
+
+@user_api.route('/api/usuarios/<int:usuario_id>', methods=['GET'])
 def buscar_usuario(usuario_id):
-    usuario = next((u for u in usuarios_db if u.id == usuario_id), None)
-    if not usuario:
-        return jsonify({'sucesso': False, 'erro': 'Usuário não encontrado'}), 404
-    return jsonify({'sucesso': True, 'usuario': usuario.to_dict()})
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id, nome, email, data_registro FROM usuarios WHERE id = %s", (usuario_id,))
+        usuario = cursor.fetchone()
+        if not usuario:
+            return jsonify({'sucesso': False, 'erro': 'Usuário não encontrado'}), 404
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': 'Erro ao buscar usuário.', 'detalhes': str(e)}), 500
+    finally:
+        cursor.close()
+        db.close()
 
-@api.route('/api/usuarios/<int:usuario_id>', methods=['PUT'])
+    if 'data_registro' in usuario and hasattr(usuario['data_registro'], 'isoformat'):
+        usuario['data_registro'] = usuario['data_registro'].isoformat()
+
+    return jsonify({'sucesso': True, 'usuario': usuario})
+
+@user_api.route('/api/usuarios/<int:usuario_id>', methods=['PUT'])
 def atualizar_usuario(usuario_id):
-    usuario = next((u for u in usuarios_db if u.id == usuario_id), None)
-    if not usuario:
-        return jsonify({'sucesso': False, 'erro': 'Usuário não encontrado'}), 404
     data = request.get_json()
     erros = validar_dados(data)
     if erros:
         return jsonify({'sucesso': False, 'erros': erros}), 400
-    usuario.nome = data['nome'].strip()
-    usuario.email = data['email'].strip()
-    return jsonify({
-        'sucesso': True,
-        'mensagem': 'Usuário atualizado com sucesso!',
-        'usuario': usuario.to_dict()
-    })
 
-@api.route('/api/usuarios/<int:usuario_id>', methods=['DELETE'])
+    nome = data['nome'].strip()
+    email = data['email'].strip()
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        # verifica existência
+        cursor.execute("SELECT id FROM usuarios WHERE id = %s", (usuario_id,))
+        if not cursor.fetchone():
+            return jsonify({'sucesso': False, 'erro': 'Usuário não encontrado'}), 404
+
+        # checa unicidade do email (exceto este usuário)
+        cursor.execute("SELECT id FROM usuarios WHERE email = %s AND id <> %s", (email, usuario_id))
+        if cursor.fetchone():
+            return jsonify({'sucesso': False, 'erro': 'Email já em uso por outro usuário.'}), 409
+
+        cursor.execute(
+            "UPDATE usuarios SET nome = %s, email = %s WHERE id = %s",
+            (nome, email, usuario_id)
+        )
+        db.commit()
+
+        cursor.execute("SELECT id, nome, email, data_registro FROM usuarios WHERE id = %s", (usuario_id,))
+        usuario = cursor.fetchone()
+    except Exception as e:
+        db.rollback()
+        return jsonify({'sucesso': False, 'erro': 'Erro ao atualizar usuário.', 'detalhes': str(e)}), 500
+    finally:
+        cursor.close()
+        db.close()
+
+    if usuario and 'data_registro' in usuario and hasattr(usuario['data_registro'], 'isoformat'):
+        usuario['data_registro'] = usuario['data_registro'].isoformat()
+
+    return jsonify({'sucesso': True, 'mensagem': 'Usuário atualizado com sucesso!', 'usuario': usuario})
+
+@user_api.route('/api/usuarios/<int:usuario_id>', methods=['DELETE'])
 def deletar_usuario(usuario_id):
-    usuario = next((u for u in usuarios_db if u.id == usuario_id), None)
-    if not usuario:
-        return jsonify({'sucesso': False, 'erro': 'Usuário não encontrado'}), 404
-    usuarios_db.remove(usuario)
-    return jsonify({'sucesso': True, 'mensagem': 'Usuário deletado com sucesso!'})
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT id FROM usuarios WHERE id = %s", (usuario_id,))
+        if not cursor.fetchone():
+            return jsonify({'sucesso': False, 'erro': 'Usuário não encontrado'}), 404
+
+        cursor.execute("DELETE FROM usuarios WHERE id = %s", (usuario_id,))
+        db.commit()
+    except Exception as e:
+        db.rollback()

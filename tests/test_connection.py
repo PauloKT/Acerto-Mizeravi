@@ -1,40 +1,33 @@
-from config import DB_CONFIG
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+import mysql.connector
+from config.config import DB_CONFIG
+
+def test_connection():
+    try:
+        conn = mysql.connector.connect(
+            host=DB_CONFIG['host'],
+            user=DB_CONFIG['user'],
+            password=DB_CONFIG['password'],
+            database=DB_CONFIG['database'],
+            port=DB_CONFIG.get('port', 3306)
+        )
+        print("✅ Conexão bem-sucedida!")
+        conn.close()
+        return True
+    except mysql.connector.Error as err:
+        print(f"❌ Erro na conexão: {err}")
+        return False
 
 def main():
     print("🔍 Testando conexão com MySQL...")
-    print(f"📋 Configurações:")
-    print(f"   Host: {DB_CONFIG['host']}")
-    print(f"   Database: {DB_CONFIG['database']}")
-    print(f"   User: {DB_CONFIG['user']}")
-    print(f"   Port: {DB_CONFIG['port']}")
-    print()
+    print(f"📋 Configurações:\n   Host: {DB_CONFIG['host']}\n   Database: {DB_CONFIG['database']}\n   User: {DB_CONFIG['user']}\n   Port: {DB_CONFIG.get('port', 3306)}\n")
     
     if test_connection():
-        print("✅ Conexão com MySQL funcionando!")
-        
-        # Testar se a tabela existe
-        try:
-            with get_db_connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute("SHOW TABLES LIKE 'usuarios'")
-                if cursor.fetchone():
-                    print("✅ Tabela 'usuarios' encontrada!")
-                    
-                    # Contar usuários
-                    cursor.execute("SELECT COUNT(*) FROM usuarios")
-                    count = cursor.fetchone()[0]
-                    print(f"📊 Total de usuários: {count}")
-                else:
-                    print("❌ Tabela 'usuarios' não encontrada!")
-                    print("💡 Execute o script SQL no MySQL para criar as tabelas")
-        except Exception as e:
-            print(f"❌ Erro ao verificar tabelas: {e}")
+        print("💡 Tudo certo!")
     else:
-        print("❌ Falha na conexão com MySQL!")
-        print("💡 Verifique se:")
-        print("   - MySQL está rodando")
-        print("   - As configurações em config.py estão corretas")
-        print("   - O banco de dados 'acerto_mizeravi' existe")
+        print("💡 Verifique as configurações!")
 
 if __name__ == "__main__":
     main()
