@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+from config.database import get_db
 
 api = Blueprint('api', __name__)
 
