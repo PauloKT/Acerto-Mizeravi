@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar - Show do Tabareli</title>
+    <title>Login - Show do Tabareli</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -20,25 +20,29 @@
   </div>
 
   <main class="panel center-panel" role="main">
-    <h2 class="title-big">CRIAR CONTA</h2>
+    <h1 class="title-big">SHOW<br>DO<br>TABARELI</h1>
+    <p class="subtitle">Faça login para jogar</p>
 
-    <form id="registerForm" class="register-form" autocomplete="off">
-
-      <label><input id="name_input" type="text" placeholder="Nome completo" required></label>
-      <label><input id="email_input" type="email" placeholder="E-mail" required></label>
-      <label><input id="login_reg_input" type="text" placeholder="Usuário" required></label>
-      <label><input id="password_reg_input" type="text" placeholder="Senha" required></label>
-
-      <div class="btn-row" style="margin-top:12px">
-        <button class="btn big" type="submit">Criar</button>
-        <a class="btn ghost" href="login.html">Cancelar</a>
+    <div class="login" aria-label="Login">
+      <div class="fields">
+        <label>
+          <input id="email" type="text" maxlength="60" name="email" placeholder="e-mail ou usuário" autocomplete="username">
+        </label>
+        <br>
+        <label>
+          <input id="pwd" type="password" maxlength="32" name="pwd" placeholder="senha" autocomplete="current-password">
+        </label>
       </div>
-    </form>
 
-    <p class="small muted">Já tem conta? <a href="login.html">Entrar</a></p>
+      <div class="btn-row">
+        <button class="btn big" id="btnLogin">Entrar</button>
+      </div>
+
+      <p class="small muted">Não tem conta? <a href="register.html">Crie conta</a></p>
+    </div>
   </main>
 
-  <script src="register.js"></script>
+  <script src="login.js"></script>
   <script src="_shooting_stars_helper.js"></script>
 </body>
 </html>

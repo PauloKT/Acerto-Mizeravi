@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo - Show do Tabareli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="scene">
+    <div class="stars"></div>
+    <div class="stars-2"></div>
+    <div class="stars-3"></div>
+    <div class="shooting-container"></div>
+    <div class="grid-top"></div>
+    <div class="grid-bottom"></div>
+    <div class="grid-center-glow"></div>
+  </div>
+
+  <main class="panel center-panel" style="max-width:1100px">
+    <header class="game-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div>
+        <div id="playerNameLabel" class="small">Jogador</div>
+        <div id="modeLabel" class="small">Modo: —</div>
+      </div>
+      <div class="badges">
+        <div class="badge" id="livesBadge">Vidas: —</div>
+        <div class="badge" id="scoreBadge">Pontos: 0</div>
+        <div class="badge" id="streakBadge">Seq: 0</div>
+        <div class="badge" id="multBadge">x1</div>
+      </div>
+    </header>
+
+    <section class="question-box">
+      <div id="questionText" class="question">Carregando...</div>
+      <div class="answers" id="answersWrap"></div>
+    </section>
+
+    <footer class="btn-row" style="margin-top:14px">
+      <button class="btn ghost" id="btnQuit">Desistir</button>
+    </footer>
+  </main>
+
+  <script src="game.js"></script>
+  <script src="_shooting_stars_helper.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Over - Show do Tabareli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="scene">
+    <div class="stars"></div>
+    <div class="stars-2"></div>
+    <div class="stars-3"></div>
+    <div class="shooting-container"></div>
+    <div class="grid-top"></div>
+    <div class="grid-bottom"></div>
+    <div class="grid-center-glow"></div>
+  </div>
+
+  <main class="panel center-panel" style="max-width:700px;text-align:center">
+    <h1 class="gameover-title">GAME OVER</h1>
+    <p class="subtitle">Sua pontuação: <strong id="finalScore">0</strong></p>
+    <div class="btn-row">
+      <button class="btn big" onclick="restartGame()">Jogar Novamente</button>
+      <button class="btn ghost" onclick="viewRanking()">Ranking</button>
+      <button class="btn ghost" onclick="goHome()">Menu</button>
+    </div>
+  </main>
+
+  <script src="gameover.js"></script>
+  <script src="_shooting_stars_helper.js"></script>
+</body>
+</html>
