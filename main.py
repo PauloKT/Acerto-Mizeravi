@@ -1,18 +1,28 @@
 from flask import Flask, send_from_directory
-from user.register import api
-from user.login import login_api
+from app.routes.auth import auth_bp
+from app.routes.users import users_bp
 
 app = Flask(__name__, static_folder="static")
-app.register_blueprint(api)
-app.register_blueprint(login_api)
+
+# Registrar blueprints
+app.register_blueprint(auth_bp)
+app.register_blueprint(users_bp)
 
 @app.route('/')
 def index():
-    return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory(app.static_folder, 'login.html')
+
+@app.route('/login')
+def login_page():
+    return send_from_directory(app.static_folder, 'login.html')
 
 @app.route('/register')
 def register_page():
     return send_from_directory(app.static_folder, 'register.html')
+
+@app.route('/menu')
+def menu_page():
+    return send_from_directory(app.static_folder, 'menu.html')
 
 @app.route('/<path:filename>')
 def static_files(filename):
