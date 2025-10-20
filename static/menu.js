@@ -1,8 +1,5 @@
 (function(){
-  const btnStart = document.getElementById('btnStart');
-  if(!btnStart) return;
-
-  const intro = new Audio('sound/intro.mp3'); intro.volume = 0.2; intro.preload = 'auto';
+  const intro = new Audio('sound/intro.mp3'); intro.loop = true; intro.volume = 0.2; intro.preload = 'auto';
   const click = new Audio('sound/click.mp3'); click.volume = 0.5; click.preload = 'auto';
 
   const cur = localStorage.getItem('tabareli_current');
@@ -22,7 +19,6 @@
   document.addEventListener('touchstart', tryPlay, { once:true });
   document.addEventListener('keydown', tryPlay, { once:true });
 
-  btnStart.addEventListener('click', ()=>{ click.currentTime=0; click.play().catch(()=>{}); window.location.href='modes.html'; });
   document.getElementById('btnQuiz').addEventListener('click', ()=>{ click.currentTime=0; click.play().catch(()=>{}); window.location.href='quiz.html'; });
   document.getElementById('btnRanking').addEventListener('click', ()=>{ click.currentTime=0; click.play().catch(()=>{}); window.location.href='ranking.html'; });
   document.getElementById('btnLogout').addEventListener('click', ()=>{ click.currentTime=0; click.play().catch(()=>{}); localStorage.removeItem('tabareli_current'); window.location.href='login.html'; });

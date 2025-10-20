@@ -11,6 +11,7 @@
 
     const raw = localStorage.getItem('tabareli_users');
     const users = raw ? JSON.parse(raw) : [];
+
     if(users.some(u=>u.login===login || u.email===email)){ alert('Login ou e-mail já cadastrado.'); return; }
 
     users.push({ name, email, login, password: pass });
