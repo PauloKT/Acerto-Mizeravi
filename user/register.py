@@ -1,6 +1,10 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
-from config.database import get_db
+try:
+    from config.database import get_db
+    DB_AVAILABLE = True
+except ImportError:
+    DB_AVAILABLE = False
 
 api = Blueprint('api', __name__)
 
@@ -49,23 +53,44 @@ def registrar_usuario():
     if erros:
         return jsonify({'sucesso': False, 'erros': erros}), 400
 
-    db = get_db()
-    cursor = db.cursor(dictionary=True)
-    
-    cursor.execute("SELECT * FROM usuarios WHERE email = %s", (data['email'].strip(),))
-    usuario_existente = cursor.fetchone()
-    if usuario_existente:
-        cursor.close()
-        db.close()
-        return jsonify({'sucesso': False, 'erro': 'Este email já está registrado.'}), 409
+    if DB_AVAILABLE:
+        try:
+            db = get_db()
+            cursor = db.cursor(dictionary=True)
+            
+            cursor.execute("SELECT * FROM usuarios WHERE email = %s", (data['email'].strip(),))
+            usuario_existente = cursor.fetchone()
+            if usuario_existente:
+                cursor.close()
+                db.close()
+                return jsonify({'sucesso': False, 'erro': 'Este email já está registrado.'}), 409
 
-    cursor.execute(
-        "INSERT INTO usuarios (nome, email, data_registro) VALUES (%s, %s, %s)",
-        (data['nome'].strip(), data['email'].strip(), datetime.utcnow())
-    )
-    db.commit()
-    cursor.close()
-    db.close()
+            cursor.execute(
+                "INSERT INTO usuarios (nome, email, data_registro) VALUES (%s, %s, %s)",
+                (data['nome'].strip(), data['email'].strip(), datetime.utcnow())
+            )
+            db.commit()
+            cursor.close()
+            db.close()
+            return jsonify({'sucesso': True, 'mensagem': 'Usuário registrado com sucesso!'}), 201
+        except Exception as e:
+            print(f"Erro no banco de dados: {e}")
+            # Fallback para sistema em memória
+            pass
+    
+    # Sistema em memória (fallback)
+    email = data['email'].strip()
+    nome = data['nome'].strip()
+    
+    # Verificar se já existe
+    for usuario in usuarios_db:
+        if usuario.email == email:
+            return jsonify({'sucesso': False, 'erro': 'Este email já está registrado.'}), 409
+    
+    # Criar novo usuário
+    novo_usuario = Usuario(nome, email)
+    usuarios_db.append(novo_usuario)
+    
     return jsonify({'sucesso': True, 'mensagem': 'Usuário registrado com sucesso!'}), 201
 
 @api.route('/api/login', methods=['POST'])

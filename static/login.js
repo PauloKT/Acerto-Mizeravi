@@ -16,7 +16,7 @@
     const user = users.find(u => u.login === emailOrLogin || u.email === emailOrLogin);
     if(user && user.password === pwd){
       localStorage.setItem('tabareli_current', user.login);
-      try{ new Audio('assets/click.mp3').play().catch(()=>{}); }catch(e){}
+      try{ new Audio('sound/click.mp3').play().catch(()=>{}); }catch(e){}
       window.location.href = 'menu.html';
     } else {
       alert('Usuário ou senha incorretos.');

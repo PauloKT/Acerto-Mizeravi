@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Show do Tabareli</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="scene">
+    <div class="stars"></div>
+    <div class="stars-2"></div>
+    <div class="stars-3"></div>
+    <div class="shooting-container"></div>
+    <div class="grid-top"></div>
+    <div class="grid-bottom"></div>
+    <div class="grid-center-glow"></div>
+  </div>
+
+  <!-- Tela de configuração -->
+  <main id="config-screen" class="panel center-panel" role="main">
+    <h1 class="title-big">QUIZ<br>DE<br>CONHECIMENTOS</h1>
+    <p class="subtitle">Configure seu quiz</p>
+
+    <div class="login" aria-label="Configuração do Quiz">
+      <div class="fields">
+        <label>
+          <select id="quantidade-perguntas" name="quantidade" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--neon-cyan); color: white; font-family: 'Press Start 2P', monospace; font-size: 10px;">
+            <option value="5">5 perguntas</option>
+            <option value="10" selected>10 perguntas</option>
+            <option value="15">15 perguntas</option>
+            <option value="20">20 perguntas</option>
+          </select>
+        </label>
+        <br>
+        <label>
+          <select id="categoria" name="categoria" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--neon-cyan); color: white; font-family: 'Press Start 2P', monospace; font-size: 10px;">
+            <option value="">Todas as categorias</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn big" id="iniciar-quiz">Iniciar Quiz</button>
+      </div>
+
+      <p class="small muted"><a href="menu.html">← Voltar ao Menu</a></p>
+    </div>
+  </main>
+
+  <!-- Tela do quiz -->
+  <main id="quiz-screen" class="panel center-panel hidden" role="main">
+    <h2 class="title-big">QUIZ<br>EM<br>ANDAMENTO</h2>
+    
+    <div class="quiz-progress">
+      <div class="score-display">
+        Pontuação: <span id="pontuacao-atual">0</span>
+      </div>
+      <div style="margin-bottom: 10px; font-size: 10px;">
+        Pergunta <span id="pergunta-atual">1</span> de <span id="total-perguntas">10</span>
+      </div>
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="question-container">
+      <div id="question-text" class="question-text"></div>
+      <div id="options-container" class="options-container"></div>
+    </div>
+
+    <div class="btn-row">
+      <button id="cancelar-quiz" class="btn ghost">Cancelar</button>
+      <button id="responder-pergunta" class="btn big" disabled>Responder</button>
+    </div>
+  </main>
+
+  <!-- Tela de resultados -->
+  <main id="results-screen" class="panel center-panel hidden" role="main">
+    <h2 class="title-big">QUIZ<br>FINALIZADO</h2>
+    
+    <div class="results-container">
+      <div id="final-score" class="final-score"></div>
+      <div id="score-message" class="score-message"></div>
+      
+      <div class="btn-row" style="margin-top: 20px;">
+        <button id="novo-quiz" class="btn big">Novo Quiz</button>
+        <button id="voltar-menu" class="btn ghost">Menu</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Container de mensagens -->
+  <div id="message-container"></div>
+
+  <script src="quiz.js"></script>
+  <script src="_shooting_stars_helper.js"></script>
+</body>
+</html>

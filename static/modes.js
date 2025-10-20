@@ -2,7 +2,7 @@
 (function(){
   const btns = document.querySelectorAll('.mode-btn');
   if(!btns.length) return;
-  const click = new Audio('assets/click.mp3'); click.preload = 'auto'; click.volume = 0.5;
+  const click = new Audio('sound/click.mp3'); click.preload = 'auto'; click.volume = 0.5;
   btns.forEach(b=>{
     b.addEventListener('click', ()=>{
       click.currentTime=0; click.play().catch(()=>{});

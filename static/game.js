@@ -1,11 +1,11 @@
 (function(){
   if(!document.getElementById('questionText')) return;
 
-  const click = new Audio('assets/click.mp3'); click.volume = 0.5; click.preload = 'auto';
+  const click = new Audio('sound/click.mp3'); click.volume = 0.5; click.preload = 'auto';
  
-  const correctS = new Audio('assets/corret.wav'); correctS.volume = 0.75; correctS.preload = 'auto';
-  const wrongS = new Audio('assets/wrong.wav'); wrongS.volume = 0.75; wrongS.preload = 'auto';
-  const bg = new Audio('assets/intro.mp3'); bg.loop=true; bg.volume=0.18; bg.preload = 'auto';
+  const correctS = new Audio('sound/corret.wav'); correctS.volume = 0.75; correctS.preload = 'auto';
+  const wrongS = new Audio('sound/wrong.wav'); wrongS.volume = 0.75; wrongS.preload = 'auto';
+  const bg = new Audio('sound/intro.mp3'); bg.loop=true; bg.volume=0.18; bg.preload = 'auto';
 
   function safePlay(a){
     try{
@@ -129,7 +129,7 @@
     arr.push({name: state.user? state.user.name : 'Anon', score: state.score, date: new Date().toISOString()});
     arr.sort((a,b)=>b.score - a.score);
     localStorage.setItem(key, JSON.stringify(arr.slice(0,200)));
-    try{ new Audio('assets/gameover.mp3').play().catch(()=>{}); }catch(e){}
+    try{ new Audio('sound/gameover.mp3').play().catch(()=>{}); }catch(e){}
     setTimeout(()=> window.location.href='gameover.html', 700);
   }
 
@@ -155,7 +155,7 @@
   }
 
   // quit button
-  if(btnQuit) btnQuit.addEventListener('click', ()=>{ if(confirm('Deseja desistir e voltar ao menu?')){ try{ bg.pause(); }catch(e){} window.location.href='home.html'; } });
+  if(btnQuit) btnQuit.addEventListener('click', ()=>{ if(confirm('Deseja desistir e voltar ao menu?')){ try{ bg.pause(); }catch(e){} window.location.href='menu.html'; } });
 
   // keyboard A-D
   document.addEventListener('keydown', (e)=>{
