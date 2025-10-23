@@ -19,13 +19,30 @@
   </div>
 
   <main class="panel center-panel" style="max-width:900px">
-    <h2 class="title-big">RANKING GERAL</h2>
+    <h2 class="title-big">RANKING</h2>
+    
+    <div class="ranking-filters" style="margin-bottom: 20px;">
+      <label for="categoria-ranking" style="color: white; font-family: 'Press Start 2P', monospace; font-size: 10px;">
+        Categoria:
+        <select id="categoria-ranking" style="margin-left: 10px; padding: 5px; background: rgba(0,0,0,0.3); border: 1px solid var(--neon-cyan); color: white; font-family: 'Press Start 2P', monospace; font-size: 10px;">
+          <option value="geral">Geral</option>
+          <option value="humanas">Humanas</option>
+          <option value="exatas">Exatas</option>
+          <option value="biologicas">Biológicas</option>
+          <option value="geografia">Geografia</option>
+          <option value="historia">História</option>
+          <option value="tecnologia">TI</option>
+        </select>
+      </label>
+    </div>
+    
     <table class="ranking-table" id="rankingTable">
       <thead><tr><th>#</th><th>Nome</th><th>Pontos</th></tr></thead>
       <tbody></tbody>
     </table>
 
     <div class="btn-row" style="margin-top:12px">
+      <button class="btn ghost" onclick="recarregarRanking()">Atualizar</button>
       <a class="btn ghost" href="menu.html">Voltar</a>
     </div>
   </main>

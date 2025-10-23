@@ -27,17 +27,21 @@
     <div class="login" aria-label="Configuração do Quiz">
       <div class="fields">
         <label>
-          <select id="quantidade-perguntas" name="quantidade" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--neon-cyan); color: white; font-family: 'Press Start 2P', monospace; font-size: 10px;">
-            <option value="5">5 perguntas</option>
-            <option value="10" selected>10 perguntas</option>
-            <option value="15">15 perguntas</option>
-            <option value="20">20 perguntas</option>
+          <select id="dificuldade" name="dificuldade" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--neon-cyan); color: white; font-family: 'Press Start 2P', monospace; font-size: 10px;">
+            <option value="easy" selected>Fácil</option>
+            <option value="medium">Médio</option>
+            <option value="hard">Difícil</option>
           </select>
         </label>
         <br>
         <label>
           <select id="categoria" name="categoria" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--neon-cyan); color: white; font-family: 'Press Start 2P', monospace; font-size: 10px;">
-            <option value="">Todas as categorias</option>
+            <option value="9" selected>Gerais</option>
+            <option value="18">TI</option>
+            <option value="17">Biológicas</option>
+            <option value="19">Exatas</option>
+            <option value="22">Geografia</option>
+            <option value="23">História</option>
           </select>
         </label>
       </div>
