@@ -108,7 +108,7 @@ def salvar_resultado():
 def obter_categorias_ranking():
     """Obtém as categorias disponíveis para ranking"""
     try:
-        categorias = ['geral', 'humanas', 'exatas', 'biologicas', 'geografia', 'historia', 'tecnologia']
+        categorias = ['geral', 'gerais', 'humanas', 'exatas', 'biologicas', 'geografia', 'historia', 'tecnologia']
         
         return jsonify({
             'sucesso': True,

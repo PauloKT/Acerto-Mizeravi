@@ -101,6 +101,7 @@ class QuizService:
 
             return {
                 'sucesso': True,
+                'resposta_correta': correta,  # Adicionar resposta_correta para a última pergunta
                 'quiz_finalizado': True,
                 'resultados': resultados
             }

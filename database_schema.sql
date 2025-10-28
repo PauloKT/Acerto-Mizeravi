@@ -1,7 +1,24 @@
 -- Script SQL para criar tabela de resultados de quiz
 -- Execute este script no seu banco MySQL se estiver usando banco de dados
 
-CREATE TABLE IF NOT EXISTS resultados_quiz (
+DROP DATABASE IF EXISTS acerto_mizeravi;
+
+CREATE DATABASE acerto_mizeravi;
+USE acerto_mizeravi;
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    login VARCHAR(50) NOT NULL,
+    senha VARCHAR(100) NOT NULL,
+    data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ativo BOOLEAN DEFAULT TRUE,
+    UNIQUE KEY unique_email (email),
+    UNIQUE KEY unique_login (login)
+);
+
+CREATE TABLE resultados_quiz (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     pontuacao INT NOT NULL,
@@ -17,6 +34,8 @@ CREATE TABLE IF NOT EXISTS resultados_quiz (
     INDEX idx_data_realizacao (data_realizacao)
 );
 
--- Índices para otimizar consultas de ranking
-CREATE INDEX IF NOT EXISTS idx_ranking_geral ON resultados_quiz (usuario_id, pontuacao DESC);
-CREATE INDEX IF NOT EXISTS idx_ranking_categoria ON resultados_quiz (categoria, usuario_id, pontuacao DESC);
+CREATE INDEX idx_ranking_geral 
+ON resultados_quiz (usuario_id, pontuacao DESC);
+
+CREATE INDEX idx_ranking_categoria 
+ON resultados_quiz (categoria, usuario_id, pontuacao DESC);
