@@ -1,202 +1,163 @@
-# Acerto Mizeravi - Sistema de Usuários
+# Sistema de Quiz - Acerto Mizeravi
 
-Sistema completo de registro e login de usuários com interface web e API REST, desenvolvido em Flask com MySQL.
+Sistema de quiz educacional desenvolvido em Flask com interface web moderna.
 
 ## 🚀 Funcionalidades
 
-- ✅ **Interface Web** - Páginas de login e registro
-- ✅ **API REST** - Endpoints completos para CRUD de usuários
-- ✅ **Banco de Dados** - Integração com MySQL
-- ✅ **Validação** - Validação robusta de dados
-- ✅ **Estrutura Profissional** - Organização modular e escalável
-- ✅ **Autenticação** - Sistema de login e registro
+- **Sistema de Autenticação**: Login e registro de usuários
+- **Quiz Interativo**: Sistema de perguntas com múltiplas opções
+- **Categorias e Dificuldades**: Organização por temas e níveis
+- **Perguntas Manuais**: Banco de perguntas personalizado
+- **Interface Responsiva**: Design moderno e intuitivo
+- **Sistema de Sons**: Efeitos sonoros para melhor experiência
+- **Fallback Inteligente**: Funciona com ou sem banco de dados
 
-## 📋 Pré-requisitos
+## 📁 Estrutura do Projeto
 
-- Python 3.7 ou superior
-- pip (gerenciador de pacotes do Python)
-
-## 🛠️ Instalação
-
-1. Clone o repositório:
-```bash
-git clone <url-do-repositorio>
-cd Acerto-Mizeravi
+```
+├── app/
+│   ├── data/           # Banco de perguntas manuais
+│   ├── models/         # Modelos de dados (User, Quiz, Pergunta)
+│   ├── routes/         # Rotas da API (auth, users, quiz)
+│   └── services/       # Lógica de negócio
+├── config/             # Configurações do sistema
+├── static/             # Arquivos estáticos (HTML, CSS, JS)
+├── tests/              # Testes do sistema
+└── main.py            # Aplicação principal
 ```
 
-2. Instale as dependências:
-```bash
-pip install -r requirements.txt
-```
+## 🛠️ Tecnologias Utilizadas
 
-3. Configure o banco de dados:
-   - Execute o script `database_schema.sql` no MySQL
-   - Configure as credenciais em `config/config.py`
+- **Backend**: Python 3.x, Flask
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Banco de Dados**: MySQL (opcional, com fallback em memória)
+- **Arquitetura**: MVC, API REST
 
-## 🚀 Como executar
+## 🚀 Como Executar
 
-1. Teste a conexão com o banco:
-```bash
-python tests/test_connection.py
-```
+### Pré-requisitos
+- Python 3.7+
+- pip (gerenciador de pacotes Python)
 
-2. Execute o servidor Flask:
-```bash
-python main.py
-```
+### Instalação
 
-3. Acesse a aplicação:
-   - **Login:** `http://localhost:5000`
-   - **Registro:** `http://localhost:5000/register`
+1. **Clone o repositório**
+   ```bash
+   git clone <url-do-repositorio>
+   cd Acerto-Mizeravi
+   ```
 
-## 📚 Endpoints da API
+2. **Instale as dependências**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### **Autenticação**
-- **POST** `/api/registrar` - Registrar novo usuário
-- **POST** `/api/login` - Login do usuário
+3. **Execute a aplicação**
+   ```bash
+   python main.py
+   ```
 
-### **Usuários**
-- **GET** `/api/usuarios` - Listar todos os usuários
-- **GET** `/api/usuarios/{id}` - Buscar usuário por ID
-- **PUT** `/api/usuarios/{id}` - Atualizar usuário
-- **DELETE** `/api/usuarios/{id}` - Deletar usuário
+4. **Acesse no navegador**
+   - Login: http://localhost:5000/
+   - Menu: http://localhost:5000/menu
+   - Quiz: http://localhost:5000/quiz
+   - Registro: http://localhost:5000/register
 
-### **Exemplo de Registro:**
-```json
-POST /api/registrar
+## 🎮 Como Usar
+
+1. **Registre-se** ou faça login
+2. **Escolha** uma categoria e dificuldade
+3. **Responda** as perguntas do quiz
+4. **Veja** seus resultados e pontuação
+
+## 📊 Sistema de Perguntas
+
+O sistema possui perguntas organizadas por:
+- **Categorias**: geral, historia, ciencias
+- **Dificuldades**: easy, medium, hard
+- **Quantidade**: 10-20 perguntas por quiz
+
+### Adicionando Novas Perguntas
+
+Edite o arquivo `app/data/perguntas.py` para adicionar novas perguntas:
+
+```python
 {
-    "nome": "João Silva",
-    "email": "joao@email.com"
+    "pergunta": "Sua pergunta aqui?",
+    "opcoes": ["Opção A", "Opção B", "Opção C", "Opção D"],
+    "resposta_correta": 0,  # Índice da resposta correta (0-3)
+    "categoria": "sua_categoria"
 }
 ```
 
-### **Exemplo de Login:**
-```json
-POST /api/login
-{
-    "nome": "João Silva"
+## 🔧 Configuração
+
+### Banco de Dados (Opcional)
+
+Para usar MySQL, configure em `config/config.py`:
+
+```python
+DB_CONFIG = {
+    'host': 'localhost',
+    'database': 'acerto_mizeravi',
+    'user': 'seu_usuario',
+    'password': 'sua_senha',
+    'port': 3306,
+    'charset': 'utf8mb4'
 }
 ```
 
-## 🧪 Testando a API
+### Modo de Desenvolvimento
 
-Execute o arquivo de exemplo para testar todos os endpoints:
+O sistema funciona em dois modos:
+- **Com Banco**: Usa MySQL para persistência
+- **Sem Banco**: Usa sistema em memória (fallback automático)
 
-```bash
-python exemplo_uso_api.py
-```
+## 🎵 Recursos de Áudio
 
-## 📝 Exemplos de Uso
+O sistema inclui efeitos sonoros:
+- `click.mp3` - Som de clique
+- `corret.wav` - Resposta correta
+- `wrong.wav` - Resposta incorreta
+- `gameover.mp3` - Fim do jogo
+- `intro.mp3` - Música de fundo
 
-### Registrar um usuário:
-```bash
-curl -X POST http://localhost:5000/api/registrar \
-  -H "Content-Type: application/json" \
-  -d '{"nome": "Maria Santos", "curso": "Ciência da Computação"}'
-```
+## 🔒 Segurança
 
-### Listar todos os usuários:
-```bash
-curl http://localhost:5000/api/usuarios
-```
+- Validação de dados no frontend e backend
+- Sanitização de entradas
+- Sistema de autenticação seguro
+- Proteção contra SQL injection
 
-### Buscar usuário por ID:
-```bash
-curl http://localhost:5000/api/usuarios/1
-```
+## 📈 Melhorias Futuras
 
-## 🔧 Estrutura do Projeto
+- [ ] Sistema de ranking global
+- [ ] Estatísticas de desempenho
+- [ ] Mais categorias de perguntas
+- [ ] Sistema de conquistas
+- [ ] Modo multiplayer
+- [ ] API para mobile
 
-```
-Acerto-Mizeravi/
-├── app/                    # Aplicação principal
-│   ├── models/             # Modelos de dados
-│   │   └── user.py         # Modelo de usuário
-│   ├── routes/             # Rotas da API
-│   │   ├── auth.py         # Autenticação
-│   │   └── users.py        # CRUD de usuários
-│   └── services/           # Lógica de negócio
-│       └── user_service.py # Serviços de usuário
-├── config/                 # Configurações
-│   ├── config.py           # Configurações do banco
-│   └── database.py          # Conexão com MySQL
-├── static/                 # Arquivos estáticos
-│   ├── index.html          # Página de login
-│   ├── register.html       # Página de registro
-│   ├── script.js           # JavaScript
-│   └── style.css           # CSS
-├── tests/                  # Testes
-│   └── test_connection.py  # Teste de conexão
-├── main.py                 # Aplicação principal
-├── requirements.txt        # Dependências
-└── database_schema.sql     # Script SQL
-```
+## 🐛 Reportar Bugs
 
-## 📊 Modelo de Dados
+Encontrou um problema? Abra uma issue no repositório com:
+- Descrição do problema
+- Passos para reproduzir
+- Screenshots (se aplicável)
+- Informações do sistema
 
-O sistema utiliza um modelo com os seguintes campos:
+## 📝 Licença
 
-- **id**: Identificador único (gerado automaticamente)
-- **nome**: Nome do usuário (obrigatório)
-- **email**: Email do usuário (obrigatório, único)
-- **data_registro**: Data e hora do registro (automático)
-- **ativo**: Status do usuário (soft delete)
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
 
-## 💾 Banco de Dados
+## 👥 Contribuição
 
-- **MySQL**: Banco de dados principal
-- **Tabela**: `usuarios` com índices otimizados
-- **Conexão**: Pool de conexões com context manager
-- **Transações**: Suporte completo a transações
+Contribuições são bem-vindas! Por favor:
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature
+3. Commit suas mudanças
+4. Abra um Pull Request
 
-## ⚠️ Validações
+---
 
-- Nome e email são obrigatórios
-- Email deve ter formato válido
-- Email deve ser único no sistema
-- Dados são automaticamente limpos (trim) antes de salvar
-
-## 🐛 Tratamento de Erros
-
-A API retorna respostas padronizadas:
-
-**Sucesso:**
-```json
-{
-    "sucesso": true,
-    "mensagem": "Operação realizada com sucesso",
-    "dados": {...}
-}
-```
-
-**Erro:**
-```json
-{
-    "sucesso": false,
-    "erro": "Descrição do erro",
-    "detalhes": "Detalhes adicionais"
-}
-```
-
-## 🏗️ Arquitetura
-
-### **Padrão MVC**
-- **Models**: `app/models/user.py` - Modelo de dados
-- **Views**: `static/` - Interface web
-- **Controllers**: `app/routes/` - Lógica de controle
-
-### **Separação de Responsabilidades**
-- **Services**: Lógica de negócio isolada
-- **Routes**: Apenas controle de requisições
-- **Models**: Estrutura de dados
-- **Config**: Configurações centralizadas
-
-### **Vantagens da Estrutura**
-- ✅ **Escalável** - Fácil adicionar novos recursos
-- ✅ **Testável** - Cada camada pode ser testada isoladamente
-- ✅ **Manutenível** - Código organizado e modular
-- ✅ **Profissional** - Seguindo padrões da indústria
-
-## 📄 Licença
-
-Este projeto é de código aberto e está disponível sob a licença MIT.
+**Desenvolvido com ❤️ para educação e entretenimento**

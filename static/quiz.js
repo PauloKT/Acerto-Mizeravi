@@ -1,10 +1,27 @@
 class QuizController {
     constructor() {
-        this.usuarioId = this.gerarIdUsuario();
+        // Verificar se há usuário logado
+        const usuarioAtual = sessionStorage.getItem('usuario_atual');
+        if(!usuarioAtual){ 
+            window.location.href = 'login.html'; 
+            return; 
+        }
+
+        try {
+            this.usuario = JSON.parse(usuarioAtual);
+            this.usuarioId = this.usuario.id;
+        } catch (e) {
+            console.error('Erro ao parsear dados do usuário:', e);
+            window.location.href = 'login.html';
+            return;
+        }
+
         this.quizAtivo = false;
         this.perguntaAtual = null;
         this.respostaSelecionada = null;
         this.pontuacao = 0;
+        this.categorias = [];
+        this.dificuldades = [];
         
         // Sons do jogo
         this.click = new Audio('sound/click.mp3');
@@ -22,7 +39,7 @@ class QuizController {
     initializeElements() {
         // Elementos da tela de configuração
         this.configScreen = document.getElementById('config-screen');
-        this.quantidadePerguntas = document.getElementById('quantidade-perguntas');
+        this.dificuldade = document.getElementById('dificuldade');
         this.categoriaSelect = document.getElementById('categoria');
         this.iniciarQuizBtn = document.getElementById('iniciar-quiz');
 
@@ -76,6 +93,67 @@ class QuizController {
         return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
 
+    async carregarCategorias() {
+        try {
+            const response = await fetch('/api/quiz/categorias');
+            const data = await response.json();
+            
+            if(data.sucesso) {
+                this.categorias = data.categorias;
+                this.atualizarSelectCategorias();
+            } else {
+                console.error('Erro ao carregar categorias:', data.erro);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar categorias:', error);
+        }
+    }
+
+    atualizarSelectCategorias() {
+        if(this.categoriaSelect && this.categorias.length > 0) {
+            this.categoriaSelect.innerHTML = '';
+            
+            this.categorias.forEach(categoria => {
+                const option = document.createElement('option');
+                option.value = categoria;
+                option.textContent = categoria.charAt(0).toUpperCase() + categoria.slice(1);
+                this.categoriaSelect.appendChild(option);
+            });
+            
+            // Carregar dificuldades para a primeira categoria
+            this.carregarDificuldades(this.categorias[0]);
+        }
+    }
+
+    async carregarDificuldades(categoria) {
+        try {
+            const response = await fetch(`/api/quiz/dificuldades?categoria=${categoria}`);
+            const data = await response.json();
+            
+            if(data.sucesso) {
+                this.dificuldades = data.dificuldades;
+                this.atualizarSelectDificuldades();
+            } else {
+                console.error('Erro ao carregar dificuldades:', data.erro);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dificuldades:', error);
+        }
+    }
+
+    atualizarSelectDificuldades() {
+        if(this.dificuldade && this.dificuldades.length > 0) {
+            this.dificuldade.innerHTML = '';
+            
+            this.dificuldades.forEach(dificuldade => {
+                const option = document.createElement('option');
+                option.value = dificuldade;
+                option.textContent = dificuldade.charAt(0).toUpperCase() + dificuldade.slice(1);
+                this.dificuldade.appendChild(option);
+            });
+        }
+    }
+
     playClickSound() {
         try {
             this.click.currentTime = 0;
@@ -97,30 +175,14 @@ class QuizController {
         } catch (e) {}
     }
 
-    async carregarCategorias() {
-        try {
-            const response = await fetch('/api/quiz/categorias');
-            const data = await response.json();
-            
-            if (data.sucesso) {
-                data.categorias.forEach(categoria => {
-                    const option = document.createElement('option');
-                    option.value = categoria;
-                    option.textContent = categoria.charAt(0).toUpperCase() + categoria.slice(1);
-                    this.categoriaSelect.appendChild(option);
-                });
-            }
-        } catch (error) {
-            console.error('Erro ao carregar categorias:', error);
-        }
-    }
-
     async iniciarQuiz() {
         try {
             this.mostrarMensagem('Iniciando quiz...', 'loading');
             
-            const quantidade = parseInt(this.quantidadePerguntas.value);
+            const dificuldade = this.dificuldade.value;
             const categoria = this.categoriaSelect.value;
+            
+            console.log(dificuldade, categoria);
 
             const response = await fetch('/api/quiz/iniciar', {
                 method: 'POST',
@@ -129,7 +191,8 @@ class QuizController {
                 },
                 body: JSON.stringify({
                     usuario_id: this.usuarioId,
-                    quantidade_perguntas: quantidade
+                    dificuldade: dificuldade,
+                    categoria: categoria
                 })
             });
 
@@ -139,6 +202,8 @@ class QuizController {
                 this.quizAtivo = true;
                 this.pontuacao = 0;
                 this.perguntaAtual = data.pergunta;
+                this.perguntaAtual.pergunta_atual = data.pergunta_atual;
+                this.perguntaAtual.total_perguntas = data.total_perguntas;
                 
                 this.atualizarInterfaceQuiz();
                 this.mostrarTelaQuiz();
@@ -155,12 +220,17 @@ class QuizController {
         if (!this.perguntaAtual) return;
 
         this.questionText.textContent = this.perguntaAtual.pergunta;
-        this.perguntaAtualSpan.textContent = this.perguntaAtual.pergunta_atual;
-        this.totalPerguntasSpan.textContent = this.perguntaAtual.total_perguntas;
+        
+        // Corrigir: usar dados corretos do quiz
+        const perguntaAtual = this.perguntaAtual.pergunta_atual || 1;
+        const totalPerguntas = this.perguntaAtual.total_perguntas || 10;
+        
+        this.perguntaAtualSpan.textContent = perguntaAtual;
+        this.totalPerguntasSpan.textContent = totalPerguntas;
         this.pontuacaoAtual.textContent = this.pontuacao;
 
         // Atualizar barra de progresso
-        const progresso = (this.perguntaAtual.pergunta_atual - 1) / this.perguntaAtual.total_perguntas * 100;
+        const progresso = (perguntaAtual - 1) / totalPerguntas * 100;
         this.progressFill.style.width = progresso + '%';
 
         // Limpar opções anteriores
@@ -227,6 +297,8 @@ class QuizController {
                     // Próxima pergunta
                     setTimeout(() => {
                         this.perguntaAtual = data.proxima_pergunta;
+                        this.perguntaAtual.pergunta_atual = data.pergunta_atual;
+                        this.perguntaAtual.total_perguntas = data.total_perguntas;
                         this.pontuacao = data.pontuacao_atual;
                         this.atualizarInterfaceQuiz();
                         this.esconderMensagem();
@@ -270,6 +342,9 @@ class QuizController {
     mostrarResultados(resultados) {
         this.quizAtivo = false;
         this.esconderMensagem();
+
+        // Salvar pontuação final no sessionStorage
+        sessionStorage.setItem('pontuacao_final', resultados.pontuacao);
 
         this.finalScore.textContent = `${resultados.pontuacao}/${resultados.total_perguntas}`;
         this.finalScore.className = 'final-score ' + this.getClassificacaoScore(resultados.porcentagem);
@@ -323,7 +398,7 @@ class QuizController {
 
     novoQuiz() {
         this.mostrarTelaConfiguracao();
-        this.usuarioId = this.gerarIdUsuario();
+        // Não gerar novo ID, usar o ID do usuário logado
     }
 
     voltarMenu() {
