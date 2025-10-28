@@ -80,3 +80,4 @@ document.head.appendChild(style);
 
 // Exportar função globalmente
 window.createShootingStars = createShootingStars;
+

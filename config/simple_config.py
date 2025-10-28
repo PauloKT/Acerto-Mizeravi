@@ -18,4 +18,4 @@ DB_CONFIG = {
 
 # Modo de desenvolvimento (sem banco de dados)
 DEVELOPMENT_MODE = True
-USE_DATABASE = False  # Mude para True quando tiver o MySQL configurado
+USE_DATABASE = False  # Mude para True quando tiver o MySQL configuradow
