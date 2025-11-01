@@ -9,15 +9,13 @@ def iniciar_quiz():
     try:
         data = request.get_json()
         usuario_id = data.get('usuario_id')
-        quantidade_perguntas = data.get('quantidade_perguntas', 10)
+        categoria = data.get('categoria')
+        dificuldade = data.get('dificuldade')
         
         if not usuario_id:
             return jsonify({'sucesso': False, 'erro': 'ID do usuário é obrigatório'}), 400
         
-        if quantidade_perguntas < 1 or quantidade_perguntas > 20:
-            return jsonify({'sucesso': False, 'erro': 'Quantidade de perguntas deve estar entre 1 e 20'}), 400
-        
-        resultado = quiz_service.iniciar_quiz(usuario_id, quantidade_perguntas)
+        resultado = quiz_service.iniciar_quiz(usuario_id, categoria, dificuldade)
         return jsonify(resultado)
         
     except Exception as e:
@@ -74,61 +72,30 @@ def cancelar_quiz():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': f'Erro interno: {str(e)}'}), 500
 
-@quiz_api.route('/api/quiz/perguntas', methods=['GET'])
-def obter_perguntas():
-    """Retorna todas as perguntas ou perguntas de uma categoria específica"""
-    try:
-        categoria = request.args.get('categoria')
-        
-        if categoria:
-            perguntas = quiz_service.obter_perguntas_por_categoria(categoria)
-        else:
-            perguntas = quiz_service.obter_todas_perguntas()
-        
-        return jsonify({
-            'sucesso': True,
-            'perguntas': perguntas,
-            'total': len(perguntas)
-        })
-        
-    except Exception as e:
-        return jsonify({'sucesso': False, 'erro': f'Erro interno: {str(e)}'}), 500
-
-@quiz_api.route('/api/quiz/perguntas', methods=['POST'])
-def adicionar_pergunta():
-    """Adiciona uma nova pergunta ao banco de dados"""
-    try:
-        data = request.get_json()
-        pergunta = data.get('pergunta')
-        opcoes = data.get('opcoes')
-        resposta_correta = data.get('resposta_correta')
-        categoria = data.get('categoria', 'geral')
-        
-        # Validações
-        if not pergunta:
-            return jsonify({'sucesso': False, 'erro': 'Pergunta é obrigatória'}), 400
-        
-        if not opcoes or len(opcoes) != 4:
-            return jsonify({'sucesso': False, 'erro': 'Deve haver exatamente 4 opções'}), 400
-        
-        if resposta_correta is None or resposta_correta < 0 or resposta_correta > 3:
-            return jsonify({'sucesso': False, 'erro': 'Resposta correta deve ser um índice entre 0 e 3'}), 400
-        
-        resultado = quiz_service.adicionar_pergunta(pergunta, opcoes, resposta_correta, categoria)
-        return jsonify(resultado)
-        
-    except Exception as e:
-        return jsonify({'sucesso': False, 'erro': f'Erro interno: {str(e)}'}), 500
-
 @quiz_api.route('/api/quiz/categorias', methods=['GET'])
 def obter_categorias():
-    """Retorna todas as categorias disponíveis"""
+    """Retorna as categorias disponíveis"""
     try:
-        categorias = list(set([p.categoria for p in quiz_service.perguntas_db]))
-        return jsonify({
-            'sucesso': True,
-            'categorias': categorias
-        })
-        
+        resultado = quiz_service.obter_categorias()
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': f'Erro interno: {str(e)}'}), 500
+
+@quiz_api.route('/api/quiz/dificuldades', methods=['GET'])
+def obter_dificuldades():
+    """Retorna as dificuldades disponíveis para uma categoria"""
+    try:
+        categoria = request.args.get('categoria', 'geral')
+        resultado = quiz_service.obter_dificuldades(categoria)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': f'Erro interno: {str(e)}'}), 500
+
+@quiz_api.route('/api/quiz/estatisticas', methods=['GET'])
+def obter_estatisticas():
+    """Retorna estatísticas sobre as perguntas disponíveis"""
+    try:
+        resultado = quiz_service.obter_estatisticas()
+        return jsonify(resultado)
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': f'Erro interno: {str(e)}'}), 500

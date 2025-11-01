@@ -19,3 +19,13 @@ DB_CONFIG = {
 # Modo de desenvolvimento (sem banco de dados)
 DEVELOPMENT_MODE = True
 USE_DATABASE = False  # Mude para True quando tiver o MySQL configurado
+
+class DefaultConfig:
+    SECRET_KEY = 'dev'
+    DEBUG = True
+    TESTING = False
+    # adicione outras configurações necessárias, ex. DATABASE_URI, etc.
+
+config = {
+    'default': DefaultConfig
+}
