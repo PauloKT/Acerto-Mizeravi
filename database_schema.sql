@@ -39,3 +39,58 @@ ON resultados_quiz (usuario_id, pontuacao DESC);
 
 CREATE INDEX idx_ranking_categoria 
 ON resultados_quiz (categoria, usuario_id, pontuacao DESC);
+
+CREATE TABLE ranking_usuarios (
+    usuario_id INT PRIMARY KEY,
+    maior_pontuacao INT DEFAULT 0,
+    media_pontuacao DECIMAL(5,2) DEFAULT 0,
+    total_quizzes INT DEFAULT 0,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+
+DELIMITER //
+
+-- Trigger de criar data/hora dos usuarios ao se registrarem
+CREATE TRIGGER before_insert_usuario
+BEFORE INSERT ON usuarios
+FOR EACH ROW
+BEGIN
+  
+    IF NEW.data_registro IS NULL THEN
+        SET NEW.data_registro = NOW();
+    END IF;
+END //
+
+DELIMITER ;
+
+-- Trigger para atualizar o rankin após o resultado do quiz, por usuario. 
+DELIMITER //
+
+CREATE TRIGGER after_insert_resultado
+AFTER INSERT ON resultados_quiz
+FOR EACH ROW
+BEGIN
+    DECLARE v_maior_pontuacao INT DEFAULT 0;
+    DECLARE v_media_pontuacao DECIMAL(5,2) DEFAULT 0;
+    DECLARE v_total INT DEFAULT 0;
+
+ 
+    SELECT 
+        IFNULL(MAX(pontuacao), 0),
+        IFNULL(AVG(pontuacao), 0),
+        COUNT(*)
+    INTO v_maior_pontuacao, v_media_pontuacao, v_total
+    FROM resultados_quiz
+    WHERE usuario_id = NEW.usuario_id;
+
+   
+    INSERT INTO ranking_usuarios (usuario_id, maior_pontuacao, media_pontuacao, total_quizzes)
+    VALUES (NEW.usuario_id, v_maior_pontuacao, v_media_pontuacao, v_total)
+    ON DUPLICATE KEY UPDATE
+        maior_pontuacao = v_maior_pontuacao,
+        media_pontuacao = v_media_pontuacao,
+        total_quizzes = v_total;
+END //
+
+DELIMITER ;

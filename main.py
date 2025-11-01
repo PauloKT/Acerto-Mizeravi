@@ -38,16 +38,38 @@ def static_files(filename):
 
 if __name__ == '__main__':
     print("🚀 Iniciando Sistema de Quiz...")
+    print("=" * 50)
+    
+    # Verificar se há banco de dados disponível e inicializar
+    try:
+        from config.database import get_db_connection, initialize_database
+        
+        print("🗄️  Sistema configurado para rodar com BANCO DE DADOS MySQL")
+        print("🔄 Inicializando banco de dados com schema atualizado...")
+        
+        # Inicializar banco de dados com o arquivo SQL (incluindo triggers)
+        if initialize_database():
+            print("✅ Schema do banco de dados atualizado com sucesso!")
+            print("=" * 50)
+            print("✅ Sistema rodando com BANCO DE DADOS ativo!")
+        else:
+            print("⚠️  Não foi possível inicializar o banco de dados automaticamente.")
+            print("💡 Você pode executar o arquivo database_schema.sql manualmente no MySQL.")
+            print("=" * 50)
+            print("⚠️  Sistema iniciado, mas banco de dados não foi inicializado automaticamente.")
+            
+    except ImportError:
+        print("⚠️  Modo: Sistema em memória (sem banco de dados)")
+        print("=" * 50)
+    except Exception as e:
+        print(f"⚠️  Erro ao inicializar banco de dados: {e}")
+        print("💡 Você pode executar o arquivo database_schema.sql manualmente no MySQL.")
+        print("=" * 50)
+        print("⚠️  Sistema iniciado, mas banco de dados não foi inicializado automaticamente.")
+    
     print("📚 Sistema de Quiz disponível em: http://localhost:5000/quiz")
     print("🎮 Menu principal em: http://localhost:5000/menu")
     print("🔐 Login em: http://localhost:5000/")
     print("📝 Registro em: http://localhost:5000/register")
-    
-    # Verificar se há banco de dados disponível
-    try:
-        from config.database import get_db_connection
-        print("✅ Modo: Banco de dados MySQL")
-    except ImportError:
-        print("⚠️  Modo: Sistema em memória (sem banco de dados)")
     
     app.run(debug=True, host='0.0.0.0', port=5000)
