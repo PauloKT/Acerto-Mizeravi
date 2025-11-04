@@ -437,7 +437,6 @@ body {
     }
 }
 
-/* Login Specific */
 .login {
     margin: 12px auto 0 auto;
     width: 350px;
@@ -450,6 +449,7 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     box-sizing: border-box;
     word-break: break-word;
+    z-index: 7;
 }
 
 .login input:focus {
@@ -496,7 +496,7 @@ body {
 }
 
 .lable-login.shield::after {
-    content: "\f3ed";
+    content: "\f09c";
 }
 
 .lable-login.arroba::after {
@@ -517,6 +517,19 @@ body {
     position: absolute;
     top: 26px;
     pointer-events: none;
+}
+
+select {
+    border-radius: 5px;
+    width: 100%;
+    height: 50px;
+    margin-top: 12px;
+    font-size: 0.9rem;
+}
+
+select option {
+  background-color: #0b0013;
+  color: #00ffff;
 }
 
 .register-form {
@@ -783,4 +796,55 @@ body {
     text-align: center;
     font-size: 10px;
     color: white;
+}
+
+
+
+.title-wrapper {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 20px;
+}
+
+.tabareli-img {
+    width: 220px;
+    height: auto;
+    position: absolute;
+    bottom: -147px;
+    left: 56%;
+    animation: floaty 3s ease-in-out infinite;
+    z-index: 1;
+}
+
+@keyframes floaty {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@media (max-width: 700px) {
+    .title-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .title-big {
+        text-align: center;
+    }
+
+    .tabareli-img {
+        width: 190px;
+        bottom: -140px;
+        right: 50%;
+    }
 }
