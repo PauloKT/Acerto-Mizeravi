@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar - Show do Tabareli</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar - Show do Tabareli</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <div class="scene">
     <div class="stars"></div>
@@ -24,21 +26,33 @@
 
     <form id="registerForm" class="register-form" autocomplete="off">
 
-      <label><input id="name_input" type="text" placeholder="Nome completo" required></label>
-      <label><input id="email_input" type="email" placeholder="E-mail" required></label>
-      <label><input id="login_reg_input" type="text" placeholder="Usuário" required></label>
-      <label><input id="password_reg_input" type="text" placeholder="Senha" required></label>
+      <label class="lable-login">
+        <input id="name_input" type="text" placeholder="Nome completo" required>
+      </label>
+
+      <label class="lable-login arroba">
+        <input id="email_input" type="email" placeholder="E-mail" required>
+      </label>
+
+      <label class="lable-login">
+        <input id="login_reg_input" type="text" placeholder="Usuário" required>
+      </label>
+
+      <label class="lable-login shield">
+        <input id="password_reg_input" type="password" placeholder="Senha" required>
+      </label>
 
       <div class="btn-row" style="margin-top:12px">
         <button class="btn big" type="submit">Criar</button>
-        <a class="btn ghost" href="login.html">Cancelar</a>
+        <button class="btn ghost" onclick="window.location.href='login.html'">Cancelar</button>
       </div>
     </form>
 
-    <p class="small muted">Já tem conta? <a href="login.html">Entrar</a></p>
+    <p class="small muted">Já tem conta? <a style="text-decoration: none; color: aqua;" href="login.html">Entrar</a></p>
   </main>
 
   <script src="register.js"></script>
   <script src="_shooting_stars_helper.js"></script>
 </body>
+
 </html>

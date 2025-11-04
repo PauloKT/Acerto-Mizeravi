@@ -1,6 +1,3 @@
-// Shooting Stars Helper
-// Cria estrelas cadentes animadas para o fundo do jogo
-
 function createShootingStars() {
     const container = document.querySelector('.shooting-container');
     if (!container) return;
