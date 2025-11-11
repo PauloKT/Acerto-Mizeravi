@@ -160,4 +160,11 @@ Contribuições são bem-vindas! Por favor:
 
 ---
 
-**Desenvolvido com ❤️ para educação e entretenimento**
+Paulo Henrique Amaral Martins
+José Guilherme Oliveira Martins
+Cristian Cesar De Lima Filho
+João Victor Brandão
+Gabriel Shinkae
+Arthur Melquiades
+Erick Costa
+Heitor Santis Cortes
